@@ -21,7 +21,6 @@ class Login extends StatelessWidget {
           init: AuthController(),
           builder: (authcontroller){
       return Scaffold(
-
         resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -64,8 +63,6 @@ class Login extends StatelessWidget {
                     child:Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children:[
-
-
                           authcontroller.loginfields(context),
 
                         ])),

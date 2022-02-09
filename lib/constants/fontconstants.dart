@@ -6,3 +6,4 @@ String proximanovaregular="ProximaNovaRegular";
 String interregular="Interregular";
 String intermedium="Intermedium";
 String intersemibold="Intersemibold";
+String testuseremail="exohealtestuser@gmail.com";

@@ -25,6 +25,13 @@ dependencies:
   path_provider: ^2.0.3
   firebase_auth: ^3.2.0
   email_validator: ^2.0.1
+  fl_chart: ^0.41.0
+  azblob: ^2.0.0
+  flutter_bluetooth_serial: ^0.4.0
+  flutter_scan_bluetooth: ^2.1.1
+  sleek_circular_slider: ^2.0.1
+  image_picker: ^0.8.4+5
+  mime: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -42,6 +49,14 @@ flutter:
     - assets/images/exohealhands.svg
     - assets/images/Desk_duotone_line.svg
     - assets/images/Arhive_light.svg
+    - assets/images/Sort.svg
+    - assets/images/Group 24.svg
+    - assets/images/Group 26.jpg
+    - assets/images/Group 28.svg
+    - assets/images/robotichandhome.svg
+    - assets/images/dualhandhome.svg
+    - assets/images/separation.svg
+    - assets/images/No task empty state.svg
     # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

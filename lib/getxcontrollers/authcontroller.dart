@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:exoheal/constants/fontconstants.dart';
 import 'package:exoheal/screens/auth/login.dart';
+import 'package:exoheal/screens/auth/signup.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,29 +15,50 @@ class AuthController extends GetxController{
   bool showpassword=false;
   bool eye=false;
   String loginerrormsg="";
+  String autherror="";
   String signuperrormsg="";
-
-  loginwithemail(String email, String password)async{
+  bool showerror=false;
+  loginwithemail(BuildContext context,String email, String password)async{
     if(EmailValidator.validate(email) && loginpasswordcontroller.text.length>7){
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email,
-          password: password);
+      loginerrormsg="";
+      autherror="";
+      update(); final newUser=  await FirebaseAuth.instance.signInWithEmailAndPassword(email: email,
+          password: password).then((value) {
+            Navigator.pushNamedAndRemoveUntil(context, "/Base", (route) => false);
+      }).catchError((err){
+        FirebaseAuthException error=err;
+        autherror=error.message.toString();
+        update();
+       // err.printInfo();
+      //  print(err.printInfo());
+    });
     }else if(EmailValidator.validate(email) !=true){
       loginerrormsg="Please enter a valid email address";
       update();
-    }else if(loginpasswordcontroller.text.length>7){
+    }else if(loginpasswordcontroller.text.length<7){
       loginerrormsg="Password must be at least 8 characters";
       update();
     }
   }
-  signupwithemail(String email, String password)async{
+  signupwithemail(BuildContext context,String email, String password)async{
     if(EmailValidator.validate(email) && passwordcontroller.text.length>7){
-      print("here");
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email,
-          password: password);
+      signuperrormsg="";
+      autherror="";
+      update();
+      final newUser=  await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email,
+          password: password).then((value) {
+        Navigator.pushNamedAndRemoveUntil(context, "/Base", (route) => false);
+      }).catchError((err){
+        FirebaseAuthException error=err;
+        autherror=error.message.toString();
+        update();
+        // err.printInfo();
+        //  print(err.printInfo());
+      });;
     }else if(EmailValidator.validate(email) !=true){
       signuperrormsg="Please enter a valid email address";
       update();
-    }else if(loginpasswordcontroller.text.length>7){
+    }else if(loginpasswordcontroller.text.length<7){
       signuperrormsg="Password must be at least 8 characters";
       update();
     }
@@ -214,21 +236,40 @@ class AuthController extends GetxController{
               ],
             )*/
             ])),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+
+                Container(
+                  margin: EdgeInsets.only(top: screenwidth*0.032,right: screenwidth*0.0246),
+                  child: Text(signuperrormsg,style: TextStyle(
+                      fontFamily: intermedium,
+                      color: Colors.redAccent,
+                      fontSize: screenwidth*0.0293
+                  ),maxLines: 2,),
+                ),
+
+
+            autherror==""?SizedBox(height: 0,):
+            Container(
+              margin: EdgeInsets.only(top: screenwidth*0.032,right: screenwidth*0.0246),
+              child: Text(autherror,style: TextStyle(
+                fontFamily: intermedium,
+                color: Colors.redAccent,
+                fontSize: screenwidth*0.0293,
+              ),
+                maxLines: 2,),
+            ),
                 GestureDetector(
                   onTap: (){
+                    signupwithemail(context,emailcontroller.text, passwordcontroller.text);
                   },
                   child: Container(
                     margin: EdgeInsets.only(top: screenwidth*0.106),
                     padding: EdgeInsets.symmetric(horizontal: screenwidth *0.0293),
 //                  width: screenwidth*0.738,
-                    width: screenwidth*0.738,
-                    height: screenwidth*0.096,
+                    width: screenwidth,
+                    height: screenwidth*0.101,
                     decoration: BoxDecoration(
                         color: Color(0xff4CA852),
-                        borderRadius: BorderRadius.all(Radius.circular(6))
+                        borderRadius: BorderRadius.all(Radius.circular(24))
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -236,8 +277,7 @@ class AuthController extends GetxController{
                       children: [
                         GestureDetector(
                           onTap: (){
-                            signupwithemail(emailcontroller.text, passwordcontroller.text);
-
+                            print("here");
                           },
                           child: Icon(CupertinoIcons.arrow_right,
                             color: Colors.transparent,
@@ -247,12 +287,12 @@ class AuthController extends GetxController{
                           child: Text("Sign Up",style: TextStyle(
                               fontFamily: intermedium,
                               color: Colors.white,
-                              fontSize: screenwidth*0.032
+                              fontSize: screenwidth*0.0373
                           ),),
                         ),
                         GestureDetector(
                           onTap: (){
-                            signupwithemail(emailcontroller.text, passwordcontroller.text);
+                            signupwithemail(context,emailcontroller.text, passwordcontroller.text);
                           },
                           child: Icon(CupertinoIcons.arrow_right,
                             color: Color(0xffECECEC),
@@ -262,55 +302,14 @@ class AuthController extends GetxController{
                     ),
                   ),
                 ),
-              ],
-            ),
+
             Container(
               width: screenwidth,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    margin:EdgeInsets.symmetric(vertical: screenwidth*0.0293),
-                    child: Text("Or,",style: TextStyle(
-                      fontFamily: intermedium,
-                      color: Color(0xff656565),
-                      fontSize: screenwidth*0.032
-                    ),),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: screenwidth *0.0293),
-                    width: screenwidth*0.738,
-                    height: screenwidth*0.096,
-                    decoration: BoxDecoration(
-                      color: Color(0xff19221D),
-                      borderRadius: BorderRadius.all(Radius.circular(6))
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: (){},
-                          child: Icon(CupertinoIcons.arrow_right,
-                          color: Colors.transparent,
-                          size: screenwidth*0.053,),
-                        ),
-                        Container(
-                          child: Text("Continue with Microsoft account",style: TextStyle(
-                            fontFamily: intermedium,
-                            color: Colors.white,
-                            fontSize: screenwidth*0.032
-                          ),),
-                        ),
-                        GestureDetector(
-                          onTap: (){},
-                          child: Icon(CupertinoIcons.arrow_right,
-                            color: Color(0xffECECEC),
-                            size: screenwidth*0.053,),
-                        ),
-                      ],
-                    ),
-                  ),
+
+
                   GestureDetector(
                     onTap: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>
@@ -518,7 +517,7 @@ class AuthController extends GetxController{
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            margin: EdgeInsets.only(top: screenwidth*0.032,right: screenwidth*0.0346),
+                            margin: EdgeInsets.only(top: screenwidth*0.032,right: screenwidth*0.0246),
                             child: Text(loginerrormsg,style: TextStyle(
                                 fontFamily: intermedium,
                                 color: Colors.redAccent,
@@ -526,31 +525,41 @@ class AuthController extends GetxController{
                             ),),
                           ),
                           Container(
-                            margin: EdgeInsets.only(top: screenwidth*0.032,right: screenwidth*0.0346),
-                            child: Text("Forgot your Password?",style: TextStyle(
+                            margin: EdgeInsets.only(top: screenwidth*0.032,right: screenwidth*0.0246),
+                            child: Text("Forgot Password?",style: TextStyle(
                                 fontFamily: intermedium,
                                 color: Color(0xff989898),
                                 fontSize: screenwidth*0.0293
                             ),),
                           )
                         ],
-                      )
+                      ),
+                      autherror==""?SizedBox(height: 0,):
+
+                          Container(
+                            margin: EdgeInsets.only(top: screenwidth*0.032,right: screenwidth*0.0246),
+                            child: Text(autherror,style: TextStyle(
+                                fontFamily: intermedium,
+                                color: Colors.redAccent,
+                                fontSize: screenwidth*0.0293,
+                            ),
+                              maxLines: 2,),
+                          ),
+
                     ])),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+
                 GestureDetector(
                   onTap: (){
-                    loginwithemail(loginemailcontroller.text, loginpasswordcontroller.text);
+                    loginwithemail(context,loginemailcontroller.text, loginpasswordcontroller.text);
                   },
                   child: Container(
                     margin: EdgeInsets.only(top: screenwidth*0.106),
                     padding: EdgeInsets.symmetric(horizontal: screenwidth *0.0293),
-                    width: screenwidth*0.738,
-                    height: screenwidth*0.096,
+                    width: screenwidth,
+                    height: screenwidth*0.101,
                     decoration: BoxDecoration(
                         color: Color(0xff4CA852),
-                        borderRadius: BorderRadius.all(Radius.circular(6))
+                        borderRadius: BorderRadius.all(Radius.circular(24))
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -566,7 +575,7 @@ class AuthController extends GetxController{
                           child: Text("Sign In",style: TextStyle(
                               fontFamily: intermedium,
                               color: Colors.white,
-                              fontSize: screenwidth*0.032
+                              fontSize: screenwidth*0.0373
                           ),),
                         ),
                         GestureDetector(
@@ -579,59 +588,18 @@ class AuthController extends GetxController{
                     ),
                   ),
                 ),
-              ],
-            ),
+
             Container(
               width: screenwidth,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    margin:EdgeInsets.symmetric(vertical: screenwidth*0.0293),
-                    child: Text("Or,",style: TextStyle(
-                        fontFamily: intermedium,
-                        color: Color(0xff656565),
-                        fontSize: screenwidth*0.032
-                    ),),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: screenwidth *0.0293),
-                    width: screenwidth*0.738,
-                    height: screenwidth*0.096,
-                    decoration: BoxDecoration(
-                        color: Color(0xff19221D),
-                        borderRadius: BorderRadius.all(Radius.circular(6))
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: (){},
-                          child: Icon(CupertinoIcons.arrow_right,
-                            color: Colors.transparent,
-                            size: screenwidth*0.053,),
-                        ),
-                        Container(
-                          child: Text("Continue with Microsoft account",style: TextStyle(
-                              fontFamily: intermedium,
-                              color: Colors.white,
-                              fontSize: screenwidth*0.032
-                          ),),
-                        ),
-                        GestureDetector(
-                          onTap: (){},
-                          child: Icon(CupertinoIcons.arrow_right,
-                            color: Color(0xffECECEC),
-                            size: screenwidth*0.053,),
-                        ),
-                      ],
-                    ),
-                  ),
+
                   GestureDetector(
                     onTap: (){
-                      Navigator.pop(context);
-
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                          SignUp()
+                      ));
                     },
                     child: Container(
                       margin: EdgeInsets.only(
