@@ -68,10 +68,82 @@ class HistoryController extends GetxController{
       ],
     );
   }
+  Widget showindivhand(BuildContext context){
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin: EdgeInsets.only(top: screenwidth*0.0906,
+          bottom: screenwidth*0.0666),
+      width: screenwidth,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset("assets/images/handdonewithsensations.svg",
+            width:screenwidth*0.35,),
+        ],
+      ),
+    );
+  }
+  Widget showindivhandwithsensations(BuildContext context){
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin: EdgeInsets.only(top: screenwidth*0.0906,
+          bottom: screenwidth*0.0509),
+      width: screenwidth,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset("assets/images/handdonewithsensations.svg",
+            width:screenwidth*0.35,),
+          Container(
+            margin: EdgeInsets.only(top: screenwidth*0.0266),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                  style: TextStyle(
+                      fontFamily: intermedium,
+                      color: darkgrey,
+                      fontSize: screenwidth*0.0293
+                  ),
+                  children: [
+                    TextSpan(
+                        text: "Last session: Mirror Therapy Completed on\n"
+                    ),
+                    TextSpan(
+                      text: DateFormat.yMMMMd('en_US').format(DateTime.now()),
+                      style:TextStyle(
+                          fontFamily: intersemibold,
+                          color: exohealgreen,
+                          fontSize: screenwidth*0.0293
+                      ),
+                    ),
+                    TextSpan(
+                      text: " at ", style:TextStyle(
+                        fontFamily: intersemibold,
+                        color: exohealgreen,
+                        fontSize: screenwidth*0.0293
+                    ),
+                    ),
+                    TextSpan(
+                      text: DateFormat.jm('en_US').format(DateTime.now())+".",
+                      style:TextStyle(
+                          fontFamily: intersemibold,
+                          color: exohealgreen,
+                          fontSize: screenwidth*0.0293
+                      ),
+                    ),
+                  ]
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
 Widget allhistory(BuildContext context,List<HistoryModel> historylist){
   double screenwidth=MediaQuery.of(context).size.width;
   return     Container(
-    margin: EdgeInsets.only(top: screenwidth*0.0693),
+    margin: EdgeInsets.only(),
     child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.vertical,

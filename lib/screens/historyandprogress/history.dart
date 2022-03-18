@@ -10,8 +10,9 @@ import 'package:intl/intl.dart';
 class HistoryPage extends StatelessWidget {
    HistoryPage({Key? key}) : super(key: key);
   List<HistoryModel> historystaticlist=[
-    HistoryModel("Full lapse exercise","exohealgreen" ,"8 min",
-        DateFormat.yMMMMd('en_US').format(DateTime.now()), "10:30"),
+    HistoryModel("Mirror Therapy","exohealgreen", "8 min",
+        DateFormat.yMMMMd('en_US').format(DateTime.now().subtract(Duration(days: 2))), "13:11"),
+
     HistoryModel("Haptic Exercise","exohealbeige", "8 min",
         DateFormat.yMMMMd('en_US').format(DateTime.now()), "08:15"),
     HistoryModel("Finger Tip Exercise","exohealdarkgrey", "8 min",
@@ -65,13 +66,13 @@ class HistoryPage extends StatelessWidget {
           physics: BouncingScrollPhysics(),
           child: Container(
             width: screenwidth,
-            height: screenheight,
             padding: EdgeInsets.only(left: screenwidth*0.0693,right: screenwidth*0.0693,
             bottom: screenwidth*0.2293),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                historycontroller.showindivhandwithsensations(context),
                 FirebaseAuth.instance.currentUser!.email!=testuseremail?
                 historycontroller.emptystate(context):
                 historycontroller.allhistory(context, historystaticlist)

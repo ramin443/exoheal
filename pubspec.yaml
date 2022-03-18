@@ -31,6 +31,7 @@ dependencies:
   image_picker: ^0.8.4+5
   mime: ^1.0.1
   rive: ^0.8.4
+  audio_video_progress_bar: ^0.10.0
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,8 @@ flutter:
     - assets/animations/allexohealexercises.riv
     - assets/images/handdone.svg
     - assets/images/handdonewithsensations.svg
+    - assets/animations/mirrortherapyidle.riv
+    - assets/animations/colorizedriveanim.riv
     # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

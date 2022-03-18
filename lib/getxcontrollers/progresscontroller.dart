@@ -2,7 +2,9 @@ import 'package:exoheal/constants/color_constants.dart';
 import 'package:exoheal/constants/fontconstants.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 class ProgressController extends GetxController{
 
   List<BarChartGroupData> barChartGroupData = [
@@ -28,6 +30,156 @@ class ProgressController extends GetxController{
       BarChartRodData(y: 12.2, colors: [Color(0xff43dde6), Color(0xff43dde6)]),
     ]),
   ];
+  String givefingerindex(int index) {
+    switch (index) {
+      case 0:
+        return "Thumb";
+      case 1:
+        return "Index";
+      case 2:
+        return "Middle";
+      case 3:
+        return "Ring";
+      case 4:
+        return "Pinky";
+      default:
+        return "";
+    }
+  }
+  Widget fingergraph(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      width: screenwidth * 0.866,
+      height: screenwidth * 0.365,
+      margin: EdgeInsets.only(top: screenwidth*0.0373,bottom: screenwidth*0.0373),
+      padding: EdgeInsets.symmetric(
+          vertical: screenwidth * 0.0426, horizontal: screenwidth * 0.0746),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(6),
+          ),
+          boxShadow: [
+            BoxShadow(
+                color: Color(0xffABABAB).withOpacity(0.15),
+                blurRadius: 10,
+                offset: Offset(0, 0))
+          ]),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          fingercolumn(context, 40, 0),
+          fingercolumn(context, 50, 1),
+          fingercolumn(context, 100, 2),
+          fingercolumn(context, 20, 3),
+          fingercolumn(context, 60, 4),
+        ],
+      ),
+    );
+  }
+
+  Widget fingercolumn(BuildContext context, int sensationsheight, int index) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: screenwidth * 0.0186,
+            height: screenwidth * 0.208,
+            decoration: BoxDecoration(
+              color: Color(0xffEFEFEF),
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: screenwidth * 0.0186,
+                  height: screenwidth * 0.208* (sensationsheight / 100),
+                  decoration: BoxDecoration(
+                    color: sensationsheight == 100
+                        ? Color(0xff4CA852)
+                        : Color(0xffF5A491),
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: screenwidth * 0.0313),
+            child: Text(
+              givefingerindex(index),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: intermedium,
+                  fontSize: screenwidth * 0.028,
+                  color: darkgrey),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+  Widget showindivhandwithsensations(BuildContext context){
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin: EdgeInsets.only(top: screenwidth*0.0906,
+          bottom: screenwidth*0.0509),
+      width: screenwidth,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset("assets/images/handdonewithsensations.svg",
+            width:screenwidth*0.35,),
+          Container(
+            margin: EdgeInsets.only(top: screenwidth*0.0266),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                  style: TextStyle(
+                      fontFamily: intermedium,
+                      color: darkgrey,
+                      fontSize: screenwidth*0.0293
+                  ),
+                  children: [
+                    TextSpan(
+                        text: "Last session: Mirror Therapy Completed on\n"
+                    ),
+                    TextSpan(
+                      text: DateFormat.yMMMMd('en_US').format(DateTime.now()),
+                      style:TextStyle(
+                          fontFamily: intersemibold,
+                          color: exohealgreen,
+                          fontSize: screenwidth*0.0293
+                      ),
+                    ),
+                    TextSpan(
+                      text: " at ", style:TextStyle(
+                        fontFamily: intersemibold,
+                        color: exohealgreen,
+                        fontSize: screenwidth*0.0293
+                    ),
+                    ),
+                    TextSpan(
+                      text: DateFormat.jm('en_US').format(DateTime.now())+".",
+                      style:TextStyle(
+                          fontFamily: intersemibold,
+                          color: exohealgreen,
+                          fontSize: screenwidth*0.0293
+                      ),
+                    ),
+                  ]
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
   Widget weeklybarchart(BuildContext context){
     double screenwidth=MediaQuery.of(context).size.width;
     return     Container(

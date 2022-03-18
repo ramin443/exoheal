@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:exoheal/constants/color_constants.dart';
 import 'package:exoheal/constants/fontconstants.dart';
 import 'package:exoheal/datamodels/ExerciseModel.dart';
@@ -20,9 +21,23 @@ class FullLapController extends GetxController {
   Artboard? riveArtboard;
   StateMachineController? _controller;
   SMIInput<bool>? isrunning;
+  bool istimercomplete=false;
+  int docreportstatus=0;
 
+  void setinitialdocreport(){
+    docreportstatus=0;
+    update();
+  }
+  void setsendingdocreport(){
+    docreportstatus=1;
+    update();
+  }
+  void setsentdocreport(){
+    docreportstatus=2;
+    update();
+  }
   void initstat(){
-    rootBundle.load('assets/animations/allexohealexercises.riv').then(
+    rootBundle.load('assets/animations/colorizedriveanim.riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
@@ -40,6 +55,14 @@ class FullLapController extends GetxController {
         update();
       },
     );
+  }
+  void setmirrortherapytrue() {
+    isrunning!.value=true;
+    update();
+  }
+  void setmirrortherapyfalse() {
+    isrunning!.value=false;
+    update();
   }
 
   String givefingerindex(int index) {
@@ -59,7 +82,7 @@ class FullLapController extends GetxController {
     }
   }
 
-  static const countdownDuration = Duration(minutes: 8);
+  static const countdownDuration = Duration(seconds: 15);
   Duration duration = Duration();
   Timer? timer;
   bool timerstarted = false;
@@ -97,13 +120,26 @@ class FullLapController extends GetxController {
   }
 
   void startTimer() {
+    setmirrortherapytrue();
     timer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
   }
-
+  void settimerfalse(){
+    istimercomplete=false;
+    update();
+  }
+  void settimertrue(){
+    istimercomplete=true;
+    update();
+  }
   void addTime() {
     final addSeconds = countDown ? -1 : 1;
     final seconds = duration.inSeconds + addSeconds;
     if (seconds < 0) {
+      setmirrortherapyfalse();
+      update();
+      Future.delayed(Duration(seconds: 6),settimertrue);
+      istimercomplete=true;
+
       timer?.cancel();
     } else {
       duration = Duration(seconds: seconds);
@@ -237,7 +273,33 @@ class FullLapController extends GetxController {
       ),
     );
   }
-
+  Widget timerprogressindicator(BuildContext context){
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin: EdgeInsets.only(top: screenwidth * 0.08,
+      left: screenwidth*0.112,right: screenwidth*0.112),
+      child: ProgressBar(
+        timeLabelTextStyle: TextStyle(
+          color: Color(0xffA8A8A8),
+          fontSize: screenwidth*0.0306,
+          fontFamily: intermedium
+        ),
+        barHeight: 6,
+        barCapShape: BarCapShape.round,
+        thumbColor: exohealgreen,
+        thumbCanPaintOutsideBar: false,
+        thumbRadius: 0,
+        timeLabelPadding: 12,
+        timeLabelLocation: TimeLabelLocation.below,
+        total: Duration(seconds: 15),
+        progress: duration==Duration(seconds: 0)?
+        duration:
+        (countdownDuration-duration),
+        baseBarColor: Color(0xffEAEAEA),
+        progressBarColor: exohealgreen,
+      )
+    );
+  }
   Widget timerslider(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
@@ -248,7 +310,6 @@ class FullLapController extends GetxController {
           initialValue:
               ((double.parse(duration.inSeconds.toString()) / (8 * 60)) * 100),
           appearance: CircularSliderAppearance(
-
               //      size: screenWidth*screenHeight*0.0005347,
               size: screenwidth * 0.48,
               //size: 190,
@@ -465,8 +526,9 @@ class FullLapController extends GetxController {
                   color: Color(0xff989898)),
             ),
           ),
-          timercontrolbuttons(context),
-          timerbuttons(context)
+          Container(
+              margin: EdgeInsets.only(top: screenwidth * 0.096),
+              child: timerbuttons(context))
         ],
       ),
     );
@@ -480,21 +542,20 @@ class FullLapController extends GetxController {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          timerslider(context),
           Container(
             margin: EdgeInsets.only(
-              top: screenwidth * 0.032,
             ),
             child: Text(
               "Make sure the bluetooth on your device\n"
-              "remains turned on during the exercise",
+                  "remains turned on during the exercise",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: intermedium,
                   fontSize: screenwidth * 0.0266,
                   color: Color(0xff989898)),
             ),
-          ),
+          ), timerprogressindicator(context),
+
           timercontrolbuttons(context),
           GestureDetector(
             onTap: () {
@@ -559,6 +620,7 @@ class FullLapController extends GetxController {
           ),
           GestureDetector(
             onTap: () {
+              setmirrortherapyfalse();
               stopTimer();
             },
             child: Container(
@@ -691,20 +753,24 @@ class FullLapController extends GetxController {
     final isRunning = timer == null ? false : timer!.isActive;
     final isCompleted = duration.inSeconds == 0;
     return Container(
-      margin: EdgeInsets.symmetric(vertical: screenwidth * 0.096),
+      margin: EdgeInsets.only(
+          top: screenwidth*0.0453,
+          bottom: screenwidth * 0.096),
       width: screenwidth,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          isRunning || isCompleted
+          isRunning
               ? GestureDetector(
                   onTap: () {
                     if (isRunning) {
+                      setmirrortherapyfalse();
                       stopTimer(resets: false);
                     } else {}
                   },
                   child: Container(
-                    margin: EdgeInsets.only(right: screenwidth * 0.08),
+                    margin: EdgeInsets.only(right: screenwidth * 0.08,
+                    ),
                     height: screenwidth * 0.101,
                     width: screenwidth * 0.101,
                     decoration: BoxDecoration(
@@ -722,6 +788,7 @@ class FullLapController extends GetxController {
                   },
                   child: Container(
                     margin: EdgeInsets.only(right: screenwidth * 0.08),
+                    padding: EdgeInsets.only(left: 3),
                     height: screenwidth * 0.101,
                     width: screenwidth * 0.101,
                     decoration: BoxDecoration(
@@ -889,6 +956,7 @@ class FullLapController extends GetxController {
           GestureDetector(
             onTap: () {
               stopTimer();
+              Navigator.pop(context);
             },
             child: Container(
               margin: EdgeInsets.only(top: screenwidth * 0.0373),
@@ -985,15 +1053,73 @@ class FullLapController extends GetxController {
       ),
     );
   }
-
-  Widget riveanimation(BuildContext context) {
+  Widget sendingtodoctor(BuildContext context){
     double screenwidth = MediaQuery.of(context).size.width;
-    return Container(
-
-    );
+    return   GestureDetector(
+    onTap: () {},
+    child: Container(
+      width: screenwidth * 0.646,
+      padding: EdgeInsets.only(
+          top: screenwidth * 0.0203,
+          bottom: screenwidth * 0.0203,
+          //    left: screenwidth*0.0373,
+          right: screenwidth * 0.0373),
+      decoration: BoxDecoration(
+          color: exohealgreen,
+          borderRadius: BorderRadius.all(Radius.circular(6))),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+//                    margin: EdgeInsets.only(left: screenwidth*0.048),
+              child: Icon(
+                CupertinoIcons.arrow_right,
+                size: screenwidth * 0.0186,
+                color: Colors.transparent,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: screenwidth * 0.074),
+              child: Text(
+                docreportstatus==0?
+                    "Send report to doctor":
+                docreportstatus==1?
+                "Sending report to doctor":
+                docreportstatus==2?
+                "Report sent to doctor":"Send report to doctor",
+                style: TextStyle(
+                    fontFamily: intermedium,
+                    color: Colors.white,
+                    fontSize: screenwidth * 0.032),
+              ),
+            ),
+            docreportstatus==2?
+            Container(
+              margin: EdgeInsets.only(left: screenwidth * 0.048),
+              child: Icon(FeatherIcons.checkCircle,
+                size: 18,
+                color: Colors.white,
+              ),
+            ):
+            Container(
+              margin: EdgeInsets.only(left: screenwidth * 0.048),
+              width: screenwidth * 0.0486,
+              height: screenwidth * 0.0486,
+              child:
+              CircularProgressIndicator(
+                strokeWidth: 1,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
   }
-
-  Widget exerciserunning(BuildContext context) {
+  Widget exercisedone(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
       width: screenwidth,
@@ -1001,8 +1127,12 @@ class FullLapController extends GetxController {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          docreportstatus==0?
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              setsendingdocreport();
+              Future.delayed(Duration(seconds: 5),setsentdocreport);
+            },
             child: Container(
               width: screenwidth * 0.646,
               padding: EdgeInsets.only(
@@ -1047,7 +1177,7 @@ class FullLapController extends GetxController {
                 ),
               ),
             ),
-          ),
+          ):sendingtodoctor(context),
           Container(
             margin: EdgeInsets.only(top: screenwidth * 0.02),
             child: Text(
@@ -1307,4 +1437,49 @@ class FullLapController extends GetxController {
       ),
     );
   }
+  Widget exerciserunning(BuildContext context){
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+
+    );
+  }
+  Widget exercisenotstartedstate(BuildContext context){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        timercontrolbuttons(context),
+        timerbuttons(context)
+        //   exerciserunning(context),
+      ],
+    );
+  }
+
+  Widget exerciserunningstate(BuildContext context){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        mirrortherapyanim(context),
+     timerrunningcolumn(context),
+
+     //   exerciserunning(context),
+      ],
+    );
+  }
+
+  Widget exercisecompletedstate(BuildContext context){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+       showindivhandwithsensations(context),
+        exercisedone(context),
+      ],
+    );
+  }
+}
+
+class DurationState {
+  const DurationState({this.progress, this.buffered, this.total});
+  final Duration? progress;
+  final Duration? buffered;
+  final Duration? total;
 }

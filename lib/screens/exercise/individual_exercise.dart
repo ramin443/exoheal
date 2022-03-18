@@ -16,6 +16,8 @@ class IndividualExercise extends StatelessWidget {
     return
       GetBuilder<FullLapController>(
         initState: (v){
+          fullLapController.setinitialdocreport();
+          fullLapController.stopTimer();
           fullLapController.setmessageboxfalse();
           fullLapController.initstat();
         },
@@ -32,6 +34,8 @@ class IndividualExercise extends StatelessWidget {
         ],
         leading: IconButton(
             onPressed: () {
+              fulllapcontroller.setmirrortherapyfalse();
+              fulllapcontroller.settimerfalse();
               Navigator.pop(context);
             },
             icon: Icon(
@@ -60,8 +64,10 @@ class IndividualExercise extends StatelessWidget {
               children: [
                 fulllapcontroller.exercisedetail(context,
                     exerciseModel!),
-                fulllapcontroller.showindivhandwithsensations(context),
-                fulllapcontroller.exerciserunning(context),
+                fulllapcontroller.istimercomplete?
+                    fulllapcontroller.exercisecompletedstate(context):
+                fulllapcontroller.exerciserunningstate(context),
+              //  fulllapcontroller.exerciserunning(context),
      /*           fulllapcontroller.loading?
                     fulllapcontroller.connectingcolumn(context):
                 fulllapcontroller.notconnectedcolumn(context)*/
