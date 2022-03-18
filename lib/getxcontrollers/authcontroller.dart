@@ -54,7 +54,7 @@ class AuthController extends GetxController{
         update();
         // err.printInfo();
         //  print(err.printInfo());
-      });;
+      });
     }else if(EmailValidator.validate(email) !=true){
       signuperrormsg="Please enter a valid email address";
       update();

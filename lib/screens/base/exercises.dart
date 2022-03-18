@@ -27,7 +27,7 @@ class Exercises extends StatelessWidget {
           drawer: exercisecontroller.drawer(context),
           backgroundColor: Colors.white,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             elevation: 0,
 
             leading: IconButton(

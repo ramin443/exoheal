@@ -8,14 +8,13 @@ import 'package:exoheal/datamodels/ExerciseModel.dart';
 import 'package:exoheal/datamodels/HistoryModel.dart';
 import 'package:exoheal/getxcontrollers/basecontroller.dart';
 import 'package:exoheal/screens/exercise/full_lap_exercise.dart';
+import 'package:exoheal/screens/exercise/individual_exercise.dart';
 import 'package:exoheal/screens/historyandprogress/history.dart';
 import 'package:exoheal/screens/historyandprogress/progress.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:flutter_scan_bluetooth/flutter_scan_bluetooth.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -36,7 +35,6 @@ class HomeController extends GetxController{
     showmessagebox=false;
     update();
   }
-  FlutterScanBluetooth _bluetooth = FlutterScanBluetooth();
 
   List<ExerciseModel> staticexerciselist=[
     ExerciseModel("exohealgreen", "Finger Tip Exercise",
@@ -350,22 +348,6 @@ class HomeController extends GetxController{
     );
   }
 
-  listendevices()async{
-    print("here");
-    _bluetooth.devices.listen((device) {
-      print(device.address);
-      print(device.name);
-        _data += device.name+' (${device.address})\n';
-        update();
-        print(_data);
-      });
-/*    _bluetooth.scanStopped.listen((device) {
-        _scanning = false;
-        _data += 'scan stopped\n';
-        update();
-        print(_data);
-    });*/
-  }
 
   List<HistoryModel> staticlist=[
     HistoryModel("Full lapse exercise","exohealgreen" ,"8 min",
@@ -378,26 +360,7 @@ class HomeController extends GetxController{
         DateFormat.yMMMMd('en_US').format(DateTime.now().subtract(Duration(days: 1))), "08:15"),
 
   ];
-  scanbluetooth()async{
-    try {
-      BluetoothConnection connection = await BluetoothConnection.toAddress("address");
-      print('Connected to the device');
 
-      connection.input!.listen((Uint8List data) {
-        print('Data incoming: ${ascii.decode(data)}');
-        connection.output.add(data); // Sending data
-
-        if (ascii.decode(data).contains('!')) {
-          connection.finish(); // Closing connection
-          print('Disconnecting by local host');
-        }
-      }).onDone(() {
-        print('Disconnected by remote request');
-      });
-    }
-    catch (exception) {
-      print('Cannot connect, exception occured');
-    }  }
 /*
   scanbluetoothdevices(){
     // Start scanning
@@ -500,7 +463,9 @@ class HomeController extends GetxController{
         GestureDetector(
           onTap: (){
             Navigator.push(context, MaterialPageRoute(builder: (context)=>
-            FullLapExercise(exerciselist: staticexerciselist,)));
+           IndividualExercise(exerciseModel:
+           ExerciseModel("exohealgreen", "Mirror Therapy",
+               "Make sure you have bluetooth on your device turned on", "15 sec"),)));
           },
           child: Container(
             width: screenwidth*0.616,

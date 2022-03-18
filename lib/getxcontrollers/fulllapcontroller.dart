@@ -7,19 +7,63 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:rive/rive.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
 class FullLapController extends GetxController {
   int currentexercise = 0;
-  bool loading=false;
+  bool loading = false;
+  Artboard? riveArtboard;
+  StateMachineController? _controller;
+  SMIInput<bool>? isrunning;
+
+  void initstat(){
+    rootBundle.load('assets/animations/allexohealexercises.riv').then(
+          (data) async {
+        // Load the RiveFile from the binary data.
+        final file = RiveFile.import(data);
+
+        // The artboard is the root of the animation and gets drawn in the
+        // Rive widget.
+        final artboard = file.mainArtboard;
+        var controller = StateMachineController.fromArtboard(artboard, 'Mirror Therapy');
+        if (controller != null) {
+          artboard.addController(controller);
+          isrunning = controller.findInput('Running');
+
+        }
+        riveArtboard = artboard;
+        update();
+      },
+    );
+  }
+
+  String givefingerindex(int index) {
+    switch (index) {
+      case 0:
+        return "Thumb";
+      case 1:
+        return "Index";
+      case 2:
+        return "Middle";
+      case 3:
+        return "Ring";
+      case 4:
+        return "Pinky";
+      default:
+        return "";
+    }
+  }
 
   static const countdownDuration = Duration(minutes: 8);
   Duration duration = Duration();
   Timer? timer;
   bool timerstarted = false;
-  List<ExerciseModel> staticexerciselist=[
+  List<ExerciseModel> staticexerciselist = [
     ExerciseModel("exohealgreen", "Finger Tip Exercise",
         "Make sure you have bluetooth on your device turned on", "8 min"),
     ExerciseModel("exohealgreen", "Haptic Exercise Exercise",
@@ -30,50 +74,50 @@ class FullLapController extends GetxController {
         "Make sure you have bluetooth on your device turned on", "8 min"),
   ];
   bool countDown = true;
-  String twoDigits(int n) => n.toString().padLeft(2,'0');
-  updatet(){
-    update();
-  }
-  setcurrentexerciseindex(int index){
-    currentexercise=index;
+
+  String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+  updatet() {
     update();
   }
 
-  void reset(){
-    if (countDown){
+  setcurrentexerciseindex(int index) {
+    currentexercise = index;
+    update();
+  }
+
+  void reset() {
+    if (countDown) {
       duration = countdownDuration;
       update();
-    } else{
+    } else {
       duration = Duration();
       update();
     }
   }
 
-  void startTimer(){
-    timer = Timer.periodic(Duration(seconds: 1),(_) => addTime());
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
   }
 
-  void addTime(){
+  void addTime() {
     final addSeconds = countDown ? -1 : 1;
-      final seconds = duration.inSeconds + addSeconds;
-      if (seconds < 0){
-        timer?.cancel();
-      } else{
-        duration = Duration(seconds: seconds);
-
-      }
-  update();
+    final seconds = duration.inSeconds + addSeconds;
+    if (seconds < 0) {
+      timer?.cancel();
+    } else {
+      duration = Duration(seconds: seconds);
+    }
+    update();
   }
 
-  void stopTimer({bool resets = true}){
-    if (resets){
+  void stopTimer({bool resets = true}) {
+    if (resets) {
       reset();
     }
     timer?.cancel();
     update();
   }
-
-
 
   void setcurrentindex(int index) {
     currentexercise = index;
@@ -201,7 +245,8 @@ class FullLapController extends GetxController {
       child: SleekCircularSlider(
           min: 0,
           max: 100,
-          initialValue: ((double.parse(duration.inSeconds.toString())/(8*60))*100),
+          initialValue:
+              ((double.parse(duration.inSeconds.toString()) / (8 * 60)) * 100),
           appearance: CircularSliderAppearance(
 
               //      size: screenWidth*screenHeight*0.0005347,
@@ -216,7 +261,7 @@ class FullLapController extends GetxController {
               infoProperties: InfoProperties(
                   topLabelText: twoDigits(duration.inMinutes.remainder(60)) +
                       ":" +
-    twoDigits(duration.inSeconds.remainder(60)),
+                      twoDigits(duration.inSeconds.remainder(60)),
                   topLabelStyle: TextStyle(
                       fontFamily: interregular,
                       color: exohealdarkgrey,
@@ -240,7 +285,7 @@ class FullLapController extends GetxController {
   Widget exercisedetail(BuildContext context, ExerciseModel exerciseModel) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
-      margin: EdgeInsets.only(top: screenwidth * 0.0853),
+      margin: EdgeInsets.only(top: screenwidth * 0.0353),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -272,19 +317,22 @@ class FullLapController extends GetxController {
       ),
     );
   }
-  bool showmessagebox=false;
 
-  setmessageboxtrue(){
-    showmessagebox=true;
+  bool showmessagebox = false;
+
+  setmessageboxtrue() {
+    showmessagebox = true;
     update();
   }
-  setmessageboxfalse(){
-    showmessagebox=false;
+
+  setmessageboxfalse() {
+    showmessagebox = false;
     update();
   }
-  Widget messagebox(BuildContext context){
-    double screenwidth=MediaQuery.of(context).size.width;
-    return     Container(
+
+  Widget messagebox(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
       width: screenwidth,
       margin: EdgeInsets.only(top: screenwidth * 0.0186),
       child: Row(
@@ -305,12 +353,14 @@ class FullLapController extends GetxController {
       ),
     );
   }
-  setloadingfalse(){
-    loading=false;
+
+  setloadingfalse() {
+    loading = false;
     setmessageboxtrue();
     update();
   }
-  Widget notconnectedcolumn(BuildContext context){
+
+  Widget notconnectedcolumn(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
       width: screenwidth,
@@ -319,26 +369,27 @@ class FullLapController extends GetxController {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           notconnectedcircle(context),
-          showmessagebox?messagebox(context):
-          Container(
-            margin: EdgeInsets.only(top: screenwidth*0.032,
-            ),
-            child: Text(
-              "Make sure the bluetooth on your device\n"
-                  "remains turned on during the exercise",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: intermedium,
-                  fontSize: screenwidth*0.0266,
-                  color: Color(0xff989898)),
-            ),
-          ),
-
+          showmessagebox
+              ? messagebox(context)
+              : Container(
+                  margin: EdgeInsets.only(
+                    top: screenwidth * 0.032,
+                  ),
+                  child: Text(
+                    "Make sure the bluetooth on your device\n"
+                    "remains turned on during the exercise",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: intermedium,
+                        fontSize: screenwidth * 0.0266,
+                        color: Color(0xff989898)),
+                  ),
+                ),
           GestureDetector(
-            onTap: (){
-              loading=true;
+            onTap: () {
+              loading = true;
               update();
-              Future.delayed(Duration(seconds: 5),setloadingfalse);
+              Future.delayed(Duration(seconds: 5), setloadingfalse);
             },
             child: Container(
               margin: EdgeInsets.only(top: screenwidth * 0.0373),
@@ -386,11 +437,11 @@ class FullLapController extends GetxController {
               ),
             ),
           ),
-
         ],
       ),
     );
   }
+
   Widget connectedcolumn(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
@@ -401,26 +452,27 @@ class FullLapController extends GetxController {
         children: [
           connectedcircle(context),
           Container(
-            margin: EdgeInsets.only(top: screenwidth*0.032,
+            margin: EdgeInsets.only(
+              top: screenwidth * 0.032,
             ),
             child: Text(
               "Make sure the bluetooth on your device\n"
-                  "remains turned on during the exercise",
+              "remains turned on during the exercise",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: intermedium,
-                  fontSize: screenwidth*0.0266,
+                  fontSize: screenwidth * 0.0266,
                   color: Color(0xff989898)),
             ),
           ),
           timercontrolbuttons(context),
           timerbuttons(context)
-
         ],
       ),
     );
   }
-  Widget timerrunningcolumn(BuildContext context){
+
+  Widget timerrunningcolumn(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
       width: screenwidth,
@@ -430,28 +482,29 @@ class FullLapController extends GetxController {
         children: [
           timerslider(context),
           Container(
-            margin: EdgeInsets.only(top: screenwidth*0.032,
+            margin: EdgeInsets.only(
+              top: screenwidth * 0.032,
             ),
             child: Text(
               "Make sure the bluetooth on your device\n"
-                  "remains turned on during the exercise",
+              "remains turned on during the exercise",
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: intermedium,
-                  fontSize: screenwidth*0.0266,
+                  fontSize: screenwidth * 0.0266,
                   color: Color(0xff989898)),
             ),
           ),
           timercontrolbuttons(context),
           GestureDetector(
-            onTap: (){
-              if(currentexercise==3){
+            onTap: () {
+              if (currentexercise == 3) {
                 stopTimer();
                 setcurrentindex(0);
                 Navigator.pop(context);
-              }else{
+              } else {
                 stopTimer();
-                setcurrentexerciseindex(currentexercise+1);
+                setcurrentexerciseindex(currentexercise + 1);
                 reset();
                 startTimer();
               }
@@ -482,7 +535,9 @@ class FullLapController extends GetxController {
                     Container(
                       margin: EdgeInsets.only(left: screenwidth * 0.074),
                       child: Text(
-                        currentexercise==3?"End Exercise": "Skip to Next One",
+                        currentexercise == 3
+                            ? "End Exercise"
+                            : "Skip to Next One",
                         style: TextStyle(
                             fontFamily: intermedium,
                             color: Colors.white,
@@ -503,9 +558,8 @@ class FullLapController extends GetxController {
             ),
           ),
           GestureDetector(
-            onTap: (){
+            onTap: () {
               stopTimer();
-
             },
             child: Container(
               margin: EdgeInsets.only(top: screenwidth * 0.0373),
@@ -591,6 +645,7 @@ class FullLapController extends GetxController {
           )
         ]));
   }
+
   Widget notconnectedcircle(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
@@ -624,74 +679,72 @@ class FullLapController extends GetxController {
           )
         ]));
   }
-  void timerstarts()async{
-    timerstarted=true;
+
+  void timerstarts() async {
+    timerstarted = true;
     startTimer();
     update();
   }
 
-  Widget timercontrolbuttons(BuildContext context){
+  Widget timercontrolbuttons(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
-    final isRunning = timer == null? false: timer!.isActive;
+    final isRunning = timer == null ? false : timer!.isActive;
     final isCompleted = duration.inSeconds == 0;
     return Container(
-      margin: EdgeInsets.symmetric(vertical: screenwidth*0.096),
+      margin: EdgeInsets.symmetric(vertical: screenwidth * 0.096),
       width: screenwidth,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           isRunning || isCompleted
-              ?   GestureDetector(
-            onTap: (){
-              if(isRunning){
-                stopTimer(resets: false);
-              }else{
-              }
-            },
-            child: Container(
-              margin: EdgeInsets.only(right: screenwidth*0.08),
-              height: screenwidth*0.101,width: screenwidth*0.101,
-              decoration: BoxDecoration(
-                color: exohealdarkgrey,
-                shape: BoxShape.circle
-              ),
-              child: Icon(
-                CupertinoIcons.pause_solid,
-                size: screenwidth*0.053,
-                color: Colors.white,
-              ),
-            ),
-          ): GestureDetector(
-            onTap: (){
-                startTimer();
-            },
-            child: Container(
-              margin: EdgeInsets.only(right: screenwidth*0.08),
-              height: screenwidth*0.101,width: screenwidth*0.101,
-              decoration: BoxDecoration(
-                  color: exohealdarkgrey,
-                  shape: BoxShape.circle
-              ),
-              child: Icon(
-                CupertinoIcons.play_fill,
-                size: screenwidth*0.053,
-                color: Colors.white,
-              ),
-            ),
-          ),
+              ? GestureDetector(
+                  onTap: () {
+                    if (isRunning) {
+                      stopTimer(resets: false);
+                    } else {}
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: screenwidth * 0.08),
+                    height: screenwidth * 0.101,
+                    width: screenwidth * 0.101,
+                    decoration: BoxDecoration(
+                        color: exohealdarkgrey, shape: BoxShape.circle),
+                    child: Icon(
+                      CupertinoIcons.pause_solid,
+                      size: screenwidth * 0.053,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    startTimer();
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: screenwidth * 0.08),
+                    height: screenwidth * 0.101,
+                    width: screenwidth * 0.101,
+                    decoration: BoxDecoration(
+                        color: exohealdarkgrey, shape: BoxShape.circle),
+                    child: Icon(
+                      CupertinoIcons.play_fill,
+                      size: screenwidth * 0.053,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
           GestureDetector(
-            onTap: (){
+            onTap: () {
               reset();
             },
             child: Container(
-              height: screenwidth*0.101,width: screenwidth*0.101,
-              decoration: BoxDecoration(
-                  color: exohealdarkgrey,
-                  shape: BoxShape.circle
-              ),
+              height: screenwidth * 0.101,
+              width: screenwidth * 0.101,
+              decoration:
+                  BoxDecoration(color: exohealdarkgrey, shape: BoxShape.circle),
               child: Icon(
                 FeatherIcons.rotateCw,
-                size: screenwidth*0.053,
+                size: screenwidth * 0.053,
                 color: Colors.white,
               ),
             ),
@@ -700,71 +753,70 @@ class FullLapController extends GetxController {
       ),
     );
   }
-  Widget connectingcolumn(BuildContext context){
+
+  Widget connectingcolumn(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
-    return   Column(
+    return Column(
       children: [
         Container(
             width: screenwidth * 0.48,
             height: screenwidth * 0.48,
             margin: EdgeInsets.only(top: screenwidth * 0.08),
-            child:
-            Stack(
-                children:[
-                  SvgPicture.asset(
-                    "assets/images/robotichandhome.svg",
-                    width: screenwidth * 0.48,
-                  ),
-                  Container(
-                    width: screenwidth * 0.48,
-                    height: screenwidth * 0.48,
-                    padding: EdgeInsets.only(bottom: screenwidth * 0.112),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          child: Text("Status: Not Connected",style: TextStyle(
-                              fontFamily: intermedium,
-                              color: exohealdarkgrey,
-                              fontSize: screenwidth*0.0293
-                          ),),
-                        )
-                      ],
-                    ),
-                  )
-                ])
-        ),
+            child: Stack(children: [
+              SvgPicture.asset(
+                "assets/images/robotichandhome.svg",
+                width: screenwidth * 0.48,
+              ),
+              Container(
+                width: screenwidth * 0.48,
+                height: screenwidth * 0.48,
+                padding: EdgeInsets.only(bottom: screenwidth * 0.112),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      child: Text(
+                        "Status: Not Connected",
+                        style: TextStyle(
+                            fontFamily: intermedium,
+                            color: exohealdarkgrey,
+                            fontSize: screenwidth * 0.0293),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ])),
         Container(
-          width: screenwidth*0.616,
-          margin: EdgeInsets.only(top: screenwidth*0.0586),
-          padding: EdgeInsets.symmetric(
-              vertical: screenwidth*0.0203),
+          width: screenwidth * 0.616,
+          margin: EdgeInsets.only(top: screenwidth * 0.0586),
+          padding: EdgeInsets.symmetric(vertical: screenwidth * 0.0203),
           decoration: BoxDecoration(
               color: exohealgreen,
-              borderRadius: BorderRadius.all(Radius.circular(6))
-          ),
+              borderRadius: BorderRadius.all(Radius.circular(6))),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  margin: EdgeInsets.only(left: screenwidth*0.074),
-                  child: Text("Searching ExoHeal device",style: TextStyle(
-                      fontFamily: intermedium,
-                      color: Colors.white,
-                      fontSize: screenwidth*0.032
-                  ),),
+                  margin: EdgeInsets.only(left: screenwidth * 0.074),
+                  child: Text(
+                    "Searching ExoHeal device",
+                    style: TextStyle(
+                        fontFamily: intermedium,
+                        color: Colors.white,
+                        fontSize: screenwidth * 0.032),
+                  ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(left: screenwidth*0.048),
-                  width:  screenwidth*0.0486,
-                  height:  screenwidth*0.0486,
+                  margin: EdgeInsets.only(left: screenwidth * 0.048),
+                  width: screenwidth * 0.0486,
+                  height: screenwidth * 0.0486,
                   child: CircularProgressIndicator(
                     strokeWidth: 1,
                     backgroundColor: Colors.white,
-                  )
-                  ,
+                  ),
                 ),
               ],
             ),
@@ -773,6 +825,7 @@ class FullLapController extends GetxController {
       ],
     );
   }
+
   Widget timerbuttons(BuildContext context) {
     double screenwidth = MediaQuery.of(context).size.width;
     return Container(
@@ -783,7 +836,7 @@ class FullLapController extends GetxController {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: (){
+            onTap: () {
               reset();
               startTimer();
             },
@@ -834,7 +887,7 @@ class FullLapController extends GetxController {
             ),
           ),
           GestureDetector(
-            onTap: (){
+            onTap: () {
               stopTimer();
             },
             child: Container(
@@ -846,7 +899,8 @@ class FullLapController extends GetxController {
                   //    left: screenwidth*0.0373,
                   right: screenwidth * 0.0373),
               decoration: BoxDecoration(
-                  color: exohealdarkgrey, borderRadius: BorderRadius.all(Radius.circular(6))),
+                  color: exohealdarkgrey,
+                  borderRadius: BorderRadius.all(Radius.circular(6))),
               child: Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -882,7 +936,6 @@ class FullLapController extends GetxController {
               ),
             ),
           )
-
         ],
       ),
     );
@@ -929,6 +982,328 @@ class FullLapController extends GetxController {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget riveanimation(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+
+    );
+  }
+
+  Widget exerciserunning(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      width: screenwidth,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              width: screenwidth * 0.646,
+              padding: EdgeInsets.only(
+                  top: screenwidth * 0.0203,
+                  bottom: screenwidth * 0.0203,
+                  //    left: screenwidth*0.0373,
+                  right: screenwidth * 0.0373),
+              decoration: BoxDecoration(
+                  color: exohealgreen,
+                  borderRadius: BorderRadius.all(Radius.circular(6))),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+//                    margin: EdgeInsets.only(left: screenwidth*0.048),
+                      child: Icon(
+                        CupertinoIcons.arrow_right,
+                        size: screenwidth * 0.0186,
+                        color: Colors.transparent,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: screenwidth * 0.074),
+                      child: Text(
+                        "Send report to doctor",
+                        style: TextStyle(
+                            fontFamily: intermedium,
+                            color: Colors.white,
+                            fontSize: screenwidth * 0.032),
+                      ),
+                    ),
+                    Container(
+//                    margin: EdgeInsets.only(left: screenwidth*0.048),
+                      child: Icon(
+                        CupertinoIcons.arrow_right,
+                        size: screenwidth * 0.0486,
+                        color: Color(0xffECECEC),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: screenwidth * 0.02),
+            child: Text(
+              "A copy of the report will be sent to the doctor and will be\n"
+              "logged on to your progress report.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: interregular,
+                  fontSize: screenwidth * 0.0293,
+                  color: exohealgrey),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(
+                top: screenwidth * 0.016, bottom: screenwidth * 0.016,
+            left: screenwidth*0.066,right: screenwidth*0.066
+            ),
+            width: screenwidth,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: screenwidth * 0.0586,
+                  height: screenwidth * 0.0586,
+                  decoration: BoxDecoration(
+                      color: exohealdarkgrey, shape: BoxShape.circle),
+                  child: Center(
+                    child: Text(
+                      "1",
+                      style: TextStyle(
+                          fontFamily: intermedium,
+                          fontSize: screenwidth * 0.0293,
+                          color: Colors.white),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: screenwidth * 0.016),
+                  child: Text(
+                    "Sensations recorded",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: intermedium,
+                        fontSize: screenwidth * 0.0333,
+                        color: exohealdarkgrey),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          fingergraph(context),
+          Container(
+            margin: EdgeInsets.only(
+                top: screenwidth * 0.016, bottom: screenwidth * 0.016,
+                left: screenwidth*0.066,right: screenwidth*0.066
+            ),
+            width: screenwidth,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: screenwidth * 0.0586,
+                  height: screenwidth * 0.0586,
+                  decoration: BoxDecoration(
+                      color: exohealdarkgrey, shape: BoxShape.circle),
+                  child: Center(
+                    child: Text(
+                      "2",
+                      style: TextStyle(
+                          fontFamily: intermedium,
+                          fontSize: screenwidth * 0.0293,
+                          color: Colors.white),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: screenwidth * 0.016),
+                  child: Text(
+                    "Sensory Graph",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: intermedium,
+                        fontSize: screenwidth * 0.0333,
+                        color: exohealdarkgrey),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget fingergraph(BuildContext context) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      width: screenwidth * 0.866,
+      height: screenwidth * 0.365,
+      margin: EdgeInsets.only(top: screenwidth*0.0373,bottom: screenwidth*0.0373),
+      padding: EdgeInsets.symmetric(
+          vertical: screenwidth * 0.0426, horizontal: screenwidth * 0.0746),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(6),
+          ),
+          boxShadow: [
+            BoxShadow(
+                color: Color(0xffABABAB).withOpacity(0.15),
+                blurRadius: 10,
+                offset: Offset(0, 0))
+          ]),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          fingercolumn(context, 40, 0),
+          fingercolumn(context, 50, 1),
+          fingercolumn(context, 100, 2),
+          fingercolumn(context, 20, 3),
+          fingercolumn(context, 60, 4),
+        ],
+      ),
+    );
+  }
+
+  Widget fingercolumn(BuildContext context, int sensationsheight, int index) {
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: screenwidth * 0.0186,
+            height: screenwidth * 0.208,
+            decoration: BoxDecoration(
+              color: Color(0xffEFEFEF),
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: screenwidth * 0.0186,
+                  height: screenwidth * 0.208* (sensationsheight / 100),
+                  decoration: BoxDecoration(
+                    color: sensationsheight == 100
+                        ? Color(0xff4CA852)
+                        : Color(0xffF5A491),
+                    borderRadius: BorderRadius.all(Radius.circular(6)),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: screenwidth * 0.0313),
+            child: Text(
+              givefingerindex(index),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: intermedium,
+                  fontSize: screenwidth * 0.028,
+                  color: darkgrey),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+  Widget mirrortherapyanim(BuildContext context){
+    return Center(
+        child: riveArtboard == null
+            ? const SizedBox()
+            : Container(
+          width: 312,
+          height: 250,
+          decoration: BoxDecoration(
+              border: Border.all(
+                  color: Colors.white12, width: 10)),
+          child: Rive(
+              alignment: Alignment.center,
+              artboard: riveArtboard!),
+        ),
+      );
+  }
+  Widget showindivhand(BuildContext context){
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin: EdgeInsets.only(top: screenwidth*0.0906,
+      bottom: screenwidth*0.0666),
+      width: screenwidth,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset("assets/images/handdone.svg",
+            width:screenwidth*0.35,),
+        ],
+      ),
+    );
+  }
+  Widget showindivhandwithsensations(BuildContext context){
+    double screenwidth = MediaQuery.of(context).size.width;
+    return Container(
+      margin: EdgeInsets.only(top: screenwidth*0.0906,
+          bottom: screenwidth*0.0509),
+      width: screenwidth,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset("assets/images/handdonewithsensations.svg",
+            width:screenwidth*0.35,),
+          Container(
+            margin: EdgeInsets.only(top: screenwidth*0.0266),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: TextStyle(
+                  fontFamily: intermedium,
+                  color: darkgrey,
+                  fontSize: screenwidth*0.0293
+                ),
+                children: [
+                  TextSpan(
+                    text: "Mirror Therapy Completed on\n"
+                  ),
+                  TextSpan(
+                      text: DateFormat.yMMMMd('en_US').format(DateTime.now()),
+                    style:TextStyle(
+                      fontFamily: intersemibold,
+                      color: exohealgreen,
+                      fontSize: screenwidth*0.0293
+                  ),
+                  ),
+                  TextSpan(
+                    text: " at ", style:TextStyle(
+                      fontFamily: intersemibold,
+                      color: exohealgreen,
+                      fontSize: screenwidth*0.0293
+                  ),
+                  ),
+                  TextSpan(
+                    text: DateFormat.jm('en_US').format(DateTime.now())+".",
+                    style:TextStyle(
+                        fontFamily: intersemibold,
+                        color: exohealgreen,
+                        fontSize: screenwidth*0.0293
+                    ),
+                  ),
+                ]
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

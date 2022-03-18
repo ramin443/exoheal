@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
@@ -31,7 +30,7 @@ class Home extends StatelessWidget {
             drawer: homecontroller.drawer(context),
             backgroundColor: Colors.white,
             appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.white,
               elevation: 0,
               actions: [
            /*     IconButton(
@@ -76,7 +75,7 @@ class Home extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     homecontroller.loading?homecontroller.connectingcolumn(context):
-                    homecontroller.notconnectedcircle(context),
+                    homecontroller.connectedcircle(context),
                    homecontroller.showmessagebox?homecontroller.messagebox(context):
                        SizedBox(height: 0,),
                     Container(

@@ -37,7 +37,7 @@ class HistoryPage extends StatelessWidget {
         builder: (historycontroller){
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
               onPressed: () {

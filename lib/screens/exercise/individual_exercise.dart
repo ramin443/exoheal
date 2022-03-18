@@ -17,6 +17,7 @@ class IndividualExercise extends StatelessWidget {
       GetBuilder<FullLapController>(
         initState: (v){
           fullLapController.setmessageboxfalse();
+          fullLapController.initstat();
         },
     init: FullLapController(),
         builder: (fulllapcontroller){
@@ -24,7 +25,7 @@ class IndividualExercise extends StatelessWidget {
       Scaffold(
         backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         actions: [
 
@@ -59,9 +60,11 @@ class IndividualExercise extends StatelessWidget {
               children: [
                 fulllapcontroller.exercisedetail(context,
                     exerciseModel!),
-                fulllapcontroller.loading?
+                fulllapcontroller.showindivhandwithsensations(context),
+                fulllapcontroller.exerciserunning(context),
+     /*           fulllapcontroller.loading?
                     fulllapcontroller.connectingcolumn(context):
-                fulllapcontroller.notconnectedcolumn(context)
+                fulllapcontroller.notconnectedcolumn(context)*/
               ],
             ),
           ),

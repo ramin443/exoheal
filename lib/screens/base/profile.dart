@@ -23,7 +23,7 @@ class Profile extends StatelessWidget {
           backgroundColor: Colors.white,
           drawer: profilecontroller.drawer(context),
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             elevation: 0,
             actions: [
               profilecontroller.changemade?

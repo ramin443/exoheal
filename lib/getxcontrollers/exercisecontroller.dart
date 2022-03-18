@@ -20,11 +20,11 @@ class ExerciseController extends GetxController{
   int currentscrollviewindex=0;
   ScrollController exercisescrollviewcontroller=ScrollController();
   List<ExerciseModel> staticexerciselist=[
+    ExerciseModel("exohealgreen", "Mirror Therapy",
+        "Make sure you have bluetooth on your device turned on", "8 min"),
     ExerciseModel("exohealgreen", "Finger Tip Exercise",
         "Make sure you have bluetooth on your device turned on", "8 min"),
     ExerciseModel("exohealgreen", "Haptic Exercise Exercise",
-        "Make sure you have bluetooth on your device turned on", "8 min"),
-    ExerciseModel("exohealgreen", "Mirror Therapy",
         "Make sure you have bluetooth on your device turned on", "8 min"),
     ExerciseModel("exohealgreen", "Grabbing Exercise",
         "Make sure you have bluetooth on your device turned on", "8 min"),

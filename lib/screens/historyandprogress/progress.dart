@@ -15,7 +15,7 @@ class ProgressPage extends StatelessWidget {
         builder: (progresscontroller){
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.white,
               elevation: 0,
               leading: IconButton(
                   onPressed: () {

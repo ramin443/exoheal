@@ -39,6 +39,7 @@ class Base extends StatelessWidget {
                   topRight: Radius.circular(15),
                 )),
             child: BottomNavigationBar(
+
               onTap: (index){
            //     print(screenwidth.toStringAsFixed(1));
                 basecontroller.setindex(index);
@@ -51,8 +52,9 @@ class Base extends StatelessWidget {
               currentIndex: basecontroller.selectedindex,
               items: [
                 BottomNavigationBarItem(
+                  label: "",
                     backgroundColor: Colors.transparent,
-                    title: SizedBox(height: 0,),    icon:
+                      icon:
                 Container(
                   child: Column(
                     children: [
@@ -80,9 +82,9 @@ class Base extends StatelessWidget {
                 )
               ),
                 BottomNavigationBarItem(
-                  title: SizedBox(height: 0,),
 //                    backgroundColor: Colors.transparent,
-                      icon: Container(
+                    label: "",
+                    icon: Container(
                       child: Column(
                         children: [
                           Icon(FeatherIcons.gitPullRequest,size: screenwidth*0.0589,
@@ -118,8 +120,9 @@ class Base extends StatelessWidget {
                         //   color: Colors.black,
                       )),*/
                 BottomNavigationBarItem(
+                    label: "",
                     backgroundColor: Colors.transparent,
-                    title: SizedBox(height: 0,),    icon:
+            icon:
                 Container(
                   child: Column(
                     children: [
