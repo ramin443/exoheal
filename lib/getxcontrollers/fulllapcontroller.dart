@@ -36,8 +36,9 @@ class FullLapController extends GetxController {
     docreportstatus=2;
     update();
   }
+
   void initstat(){
-    rootBundle.load('assets/animations/colorizedriveanim.riv').then(
+    rootBundle.load('assets/animations/fixedriveanim.riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
@@ -52,6 +53,7 @@ class FullLapController extends GetxController {
 
         }
         riveArtboard = artboard;
+        setmirrortherapyfalse();
         update();
       },
     );
@@ -802,6 +804,7 @@ class FullLapController extends GetxController {
                 ),
           GestureDetector(
             onTap: () {
+//              setmirrortherapyfalse();
               reset();
             },
             child: Container(
@@ -1229,7 +1232,7 @@ class FullLapController extends GetxController {
             ),
           ),
           fingergraph(context),
-          Container(
+  /*        Container(
             margin: EdgeInsets.only(
                 top: screenwidth * 0.016, bottom: screenwidth * 0.016,
                 left: screenwidth*0.066,right: screenwidth*0.066
@@ -1266,7 +1269,7 @@ class FullLapController extends GetxController {
                 ),
               ],
             ),
-          ),
+          ),*/
         ],
       ),
     );

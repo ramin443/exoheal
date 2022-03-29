@@ -12,7 +12,6 @@ class HistoryPage extends StatelessWidget {
   List<HistoryModel> historystaticlist=[
     HistoryModel("Mirror Therapy","exohealgreen", "8 min",
         DateFormat.yMMMMd('en_US').format(DateTime.now().subtract(Duration(days: 2))), "13:11"),
-
     HistoryModel("Haptic Exercise","exohealbeige", "8 min",
         DateFormat.yMMMMd('en_US').format(DateTime.now()), "08:15"),
     HistoryModel("Finger Tip Exercise","exohealdarkgrey", "8 min",
