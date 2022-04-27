@@ -5,7 +5,7 @@ class Chart extends StatelessWidget {
   final List<SensorValue> _data;
 
   Chart(this._data);
-
+DateTime finalneeded=DateTime.now().add(Duration(seconds: 30));
   @override
   Widget build(BuildContext context) {
     return  charts.TimeSeriesChart([

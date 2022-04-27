@@ -3,6 +3,7 @@ import 'package:exoheal/screens/auth/login.dart';
 import 'package:exoheal/screens/auth/signup.dart';
 import 'package:exoheal/screens/base/base.dart';
 import 'package:exoheal/screens/initial/splashscreen.dart';
+import 'package:exoheal/test/show_chart.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 

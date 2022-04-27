@@ -16,6 +16,7 @@ class IndividualExercise extends StatelessWidget {
     return
       GetBuilder<FullLapController>(
         initState: (v){
+          fullLapController.clearData();
           fullLapController.setinitialdocreport();
           fullLapController.stopTimer();
           fullLapController.setmessageboxfalse();
@@ -34,6 +35,7 @@ class IndividualExercise extends StatelessWidget {
         ],
         leading: IconButton(
             onPressed: () {
+              fulllapcontroller.shutgraph();
               fulllapcontroller.setmirrortherapyfalse();
               fulllapcontroller.settimerfalse();
               Navigator.pop(context);
