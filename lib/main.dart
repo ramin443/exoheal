@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exoheal/gamified%20elements/new_badge.dart';
+import 'package:exoheal/screens/auth/doctors_interface/doctor_login.dart';
 import 'package:exoheal/screens/auth/login.dart';
 import 'package:exoheal/screens/auth/signup.dart';
 import 'package:exoheal/screens/base/base.dart';
@@ -6,9 +8,16 @@ import 'package:exoheal/screens/initial/splashscreen.dart';
 import 'package:exoheal/test/show_chart.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 void main() async{
   runApp(const MyApp());
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    print("WidgetsBinding");
+  });
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    print("SchedulerBinding");
+  });
   await Firebase.initializeApp();
 }
 
@@ -22,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SplashScreen(),
+      home: DoctorsLogin(),
       routes: <String, WidgetBuilder>{
         '/SignUp': (BuildContext context) => SignUp(),
         '/Login': (BuildContext context) => Login(),

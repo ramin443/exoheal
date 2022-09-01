@@ -5,6 +5,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:exoheal/constants/color_constants.dart';
 import 'package:exoheal/constants/fontconstants.dart';
 import 'package:exoheal/datamodels/ExerciseModel.dart';
+import 'package:exoheal/gamified%20elements/new_badge.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -168,7 +169,7 @@ class FullLapController extends GetxController {
   }
 
   void initstat(){
-    rootBundle.load('assets/animations/fixedriveanim.riv').then(
+    rootBundle.load('assets/animations/exoheal_final_hand (1).riv').then(
           (data) async {
         // Load the RiveFile from the binary data.
         final file = RiveFile.import(data);
@@ -176,7 +177,7 @@ class FullLapController extends GetxController {
         // The artboard is the root of the animation and gets drawn in the
         // Rive widget.
         final artboard = file.mainArtboard;
-        var controller = StateMachineController.fromArtboard(artboard, 'Mirror Therapy');
+        var controller = StateMachineController.fromArtboard(artboard, 'Imagine final');
         if (controller != null) {
           artboard.addController(controller);
           isrunning = controller.findInput('Running');
@@ -214,7 +215,7 @@ class FullLapController extends GetxController {
     }
   }
 
-  static const countdownDuration = Duration(seconds: 15);
+  static const countdownDuration = Duration(seconds: 13);
   Duration duration = Duration();
   Timer? timer;
   bool timerstarted = false;
@@ -251,9 +252,9 @@ class FullLapController extends GetxController {
     }
   }
 
-  void startTimer() {
+  void startTimer(BuildContext context) {
     setmirrortherapytrue();
-    timer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
+    timer = Timer.periodic(Duration(seconds: 1), (_) => addTime(context));
   }
   void settimerfalse(){
     istimercomplete=false;
@@ -264,7 +265,7 @@ class FullLapController extends GetxController {
     istimercomplete=true;
     update();
   }
-  void addTime() {
+  void addTime(BuildContext context) {
     final addSeconds = countDown ? -1 : 1;
     final seconds = duration.inSeconds + addSeconds;
     if (seconds < 0) {
@@ -272,6 +273,9 @@ class FullLapController extends GetxController {
       update();
 //      Future.delayed(Duration(seconds: 6),settimertrue);
       istimercomplete=true;
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context)=>NewBadge()
+      ));
       clearData();
       timer?.cancel();
     } else {
@@ -424,7 +428,7 @@ class FullLapController extends GetxController {
         thumbRadius: 0,
         timeLabelPadding: 12,
         timeLabelLocation: TimeLabelLocation.below,
-        total: Duration(seconds: 15),
+        total: Duration(seconds: 13),
         progress: duration==Duration(seconds: 0)?
         duration:
         (countdownDuration-duration),
@@ -876,12 +880,12 @@ class FullLapController extends GetxController {
         ]));
   }
 
-  void timerstarts() async {
+  void timerstarts(BuildContext context) async {
     timerstarted = true;
-    startTimer();
+    startTimer(context);
     stopTimer();
     reset();
-    startTimer();
+    startTimer(context);
     toggle();
     update();
   }
@@ -931,7 +935,7 @@ class FullLapController extends GetxController {
                 )
               : GestureDetector(
                   onTap: () {
-                    timerstarts();
+                    timerstarts(context);
                   },
                   child: Container(
                     margin: EdgeInsets.only(right: screenwidth * 0.08),
@@ -1053,7 +1057,7 @@ class FullLapController extends GetxController {
           GestureDetector(
             onTap: () {
               reset();
-              startTimer();
+              startTimer(context);
             },
             child: Container(
               margin: EdgeInsets.only(top: screenwidth * 0.0373),

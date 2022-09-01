@@ -7,3 +7,6 @@ String interregular="Interregular";
 String intermedium="Intermedium";
 String intersemibold="Intersemibold";
 String testuseremail="exohealtestuser@gmail.com";
+String sfproroundedregular="Sfproroundedreg";
+String sfproroundedmedium="Sfproroundedmed";
+String sfproroundedsemibold="Sfproroundedsemi";

@@ -65,6 +65,12 @@ flutter:
     - assets/animations/colorizedriveanim.riv
     - assets/animations/fixedriveanim.riv
     - assets/images/Vector 274.svg
+    - assets/images/Group 168.png
+    - assets/images/Ellipse 143.png
+    - assets/images/Group 169.png
+    - assets/images/Group 170.png
+    - assets/animations/exoheal_final_hand.riv
+    - assets/animations/exoheal_final_hand (1).riv
     # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
@@ -105,7 +111,16 @@ flutter:
     - family: Intersemibold
       fonts:
         - asset: fonts/Inter-SemiBold.ttf
-      # fonts:
+    - family: Sfproroundedreg
+      fonts:
+        - asset: fonts/FontsFree-Net-SF-Pro-Rounded-Regular.ttf
+    - family: Sfproroundedmed
+      fonts:
+        - asset: fonts/FontsFree-Net-SF-Pro-Rounded-Medium.ttf
+    - family: Sfproroundedsemi
+      fonts:
+        - asset: fonts/FontsFree-Net-SF-Pro-Rounded-Semibold.ttf
+          # fonts:
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
