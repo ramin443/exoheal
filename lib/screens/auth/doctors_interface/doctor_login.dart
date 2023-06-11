@@ -24,7 +24,7 @@ class DoctorsLogin extends StatelessWidget {
         init: DoctorAuthController(),
         builder: (doctorsauthcontroller){
           return Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             body: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
                 child: Container(

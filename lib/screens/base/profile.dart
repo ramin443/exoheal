@@ -27,7 +27,7 @@ class Profile extends StatelessWidget {
             elevation: 0,
             actions: [
               profilecontroller.changemade?
-              FlatButton(onPressed: (){
+              GestureDetector(onTap: (){
                 profilecontroller.updateuserdata(context);
               }, child:  Container(
                 child: Text("Save",

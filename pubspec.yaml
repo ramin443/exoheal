@@ -13,7 +13,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
   sqflite: ^2.0.0+4
@@ -25,20 +24,20 @@ dependencies:
   path_provider: ^2.0.3
   firebase_auth: ^3.2.0
   email_validator: ^2.0.1
-  fl_chart: ^0.41.0
+  fl_chart: ^0.36.4
   azblob: ^2.0.0
   sleek_circular_slider: ^2.0.1
   image_picker: ^0.8.4+5
   mime: ^1.0.1
-  rive: ^0.8.4
-  audio_video_progress_bar: ^0.10.0
+  rive: ^0.9.0
+  audio_video_progress_bar: ^1.0.1
   charts_flutter: ^0.12.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.1
 
 # The following section is specific to Flutter.
 flutter:

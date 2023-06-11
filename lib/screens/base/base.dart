@@ -6,8 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 class Base extends StatelessWidget {
-  const Base({Key? key}) : super(key: key);
-
+   Base({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.white,

@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: DoctorsLogin(),
+      home: SplashScreen(),
       routes: <String, WidgetBuilder>{
         '/SignUp': (BuildContext context) => SignUp(),
         '/Login': (BuildContext context) => Login(),
